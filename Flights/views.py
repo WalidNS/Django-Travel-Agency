@@ -3,7 +3,6 @@ from .models import Flight, Reservation
 from django.contrib.auth.models import User,auth
 from django.shortcuts import redirect
 from django.http import JsonResponse
-from django.contrib.auth.password_validation import validate_password
 from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 # import the logging library

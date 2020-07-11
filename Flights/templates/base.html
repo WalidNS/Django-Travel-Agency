@@ -25,7 +25,7 @@
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Home:Home'%}">Home</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Flights</a></li>
                         {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Logout</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Auth:logout' %}">Logout</a></li>
                         {% else %}
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" data-toggle="modal" data-target="#loginModal" id="mod">Login</a></li>
                         {% endif %} 
@@ -136,5 +136,101 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         <script src="{% static "js/scripts.js" %}"></script>
         <script src="{% static "js/login-register.js" %}"></script>
+        <script>
+            $(function() {
+                //show register and login modals
+                $('#registerf').click(function(){ showRegisterForm(); return false; });
+                $('#loginf').click(function(){ showLoginForm(); return false; });  
+                //handle login form
+                $("#login_form").submit(function (e) {
+                // preventing from page reload and default actions
+                e.preventDefault();
+                // serialize the data for sending the form data.
+                var serializedData = $(this).serialize();
+                // make POST ajax call
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'Auth:login' %}",
+                    data: serializedData,
+                    success: function (response) {
+                        // 1. clear the form.
+                        $("#login_form").trigger('reset');
+                        // 2. focus the login username input 
+                        $("#login_username").focus();
+                        if(response !== undefined){
+                        try{
+                            // display the errors if exists
+                            var errs = response["error_message"];
+                            if (errs !== undefined){
+                                $("#login_errors").empty();
+                                $("#login_errors").prepend(`<h4>${errs}</h4>`);
+                            }
+                            else{//reload page
+                                location.reload();  
+                            }
+                        }
+                        catch(error){//reponse is undefined
+                            console.error("Not a JSON response")
+                        }
+                    }
+
+                },
+                error: function (response) {
+                // alert the error if any error occured
+                alert("errors");
+                }
+            })
+            })
+            //handle register form
+            $("#register_form").submit(function (e) {
+                // preventing from page reload and default actions
+                e.preventDefault();
+                // serialize the data for sending the form data.
+                var serializedData = $(this).serialize();
+                // make POST ajax call
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'Auth:signup' %}",
+                    data: serializedData,
+                    success: function (response) {
+                        // 1. clear the form.
+                        $("#register_form").trigger('reset');
+                        // 2. focus to register username input 
+                        $("#register_username").focus();
+                        if(response !== undefined){
+                            try{
+                            // display the errors if exists
+                            $("#register_errors").empty();
+                            var errs = response["error_message"];
+                            if (errs !== undefined){
+                                console.log(errs);
+                                errs.forEach(err =>{
+                                    $("#register_errors").prepend(`<h4>${err}</h4><br>`);
+                                })
+                                //$("#register_errors").prepend(`<h4>${errs}</h4>`);
+                            }
+                            else
+                                location.reload();    
+                        }
+                        catch(error){
+                            //console.error("Not a JSON response")
+                            console.log('esalem')
+                        }
+                    }
+
+                },
+                error: function (response) {
+                // alert the error if any error occured
+                alert("errors");
+                }
+            })
+            }) 
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'left'
+                }, function(start, end, label) {
+                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            });
+            });
+        </script>
     </body>
 </html>
