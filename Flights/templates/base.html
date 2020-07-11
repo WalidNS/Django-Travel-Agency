@@ -1,0 +1,140 @@
+{% load static %}
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        
+        <!--Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/login-register.css" %}">
+        <link href="{% static "css\styles.css" %}" rel="stylesheet">
+    </head>
+    <body id="page-top">
+         <!-- Navigation-->
+         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand js-scroll-trigger" href="{% url 'Home:Home'%}"><img src="{% static "img/navbar-logo.svg" %}" alt="" /></a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" id="navtoggle">
+                    Menu
+                    <i class="fas fa-bars ml-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ml-auto">
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Home:Home'%}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Flights</a></li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Logout</a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" data-toggle="modal" data-target="#loginModal" id="mod">Login</a></li>
+                        {% endif %} 
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container">
+                <div class="masthead-subheading">Welcome To The Travel Agency</div>
+                <div class="masthead-heading text-uppercase">Make your tour amazing with us</div>
+            </div>
+        </header>
+
+
+        <!-- Content-->
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        
+        
+        <footer class="footer py-4" style="background-color: #343a40;">
+            <div class="container" >
+            <div style="color:#fff"> Copyright © 2020</div>
+            </div>
+        </footer>  
+        
+        <div class="modal fade login" id="loginModal">
+            <div class="modal-dialog login animated">
+                <div class="modal-content">
+                   <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title">Login with</h4>
+                  </div>
+                  <div class="modal-body">
+                      <div class="box">
+                           <div class="content">
+                              <div class="social">
+                                  <a class="circle github" href="">
+                                      <i class="fa fa-github fa-fw"></i>
+                                  </a>
+                                  <a id="google_login" class="circle google" href="">
+                                      <i class="fa fa-google-plus fa-fw"></i>
+                                  </a>
+                                  <a id="facebook_login" class="circle facebook" href="">
+                                      <i class="fa fa-facebook fa-fw"></i>
+                                  </a>
+                              </div>
+                              <div class="division">
+                                  <div class="line l"></div>
+                                    <span>or</span>
+                                  <div class="line r"></div>
+                              </div>
+                              <div class="form loginBox">
+                                  <form method="post" action="login/" accept-charset="UTF-8" id="login_form">
+                                    {% csrf_token %}
+                                    <input type="text" class="form-control" placeholder="Username" name="username" id="login_username" required><br>
+                                    <input type="password" class="form-control" placeholder="Password" name="password" required><br>
+                                    <input class="btn btn-default btn-login" type="submit" value="Login" > 
+                                  </form>
+                              </div>
+                              <div class="error d-flex justify-content-center" id="login_errors"></div>
+                           </div>
+                      </div>
+                      <div class="box">
+                          <div class="content registerBox" style="display:none;">
+                           <div class="form">
+                              <form method="post" html="{:multipart=>true}" data-remote="true" action="signup/" accept-charset="UTF-8" id="register_form">
+                                {% csrf_token %}
+                                <input type="text" class="form-control" placeholder="Username" name="username" required id="register_username"><br>
+                                <input type="email" class="form-control" placeholder="Email" name="email" required><br>
+                                <input type="password" class="form-control" placeholder="Please enter a Password" name="password1" required><br>
+                                <input type="password" class="form-control" placeholder="Please enter a Password" name="password2" required><br>
+                                <input class="btn btn-default btn-register" type="submit" value="Create account" name="submit">
+                              </form>
+                            </div>
+                            
+                            <div class="error" id="register_errors"></div>
+                              <!--{% for message in messages %}
+                                <h3>{{ message }}</h3>
+                                {% endfor %} -->
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="forgot login-footer">
+                          <span>Looking to
+                               <a href="#" id="registerf">create an account</a>
+                          ?</span>
+                      </div>
+                      <div class="forgot register-footer" style="display:none" >
+                           <span>Already have an account?</span>
+                           <a href="#" id="loginf">Login</a>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS, Popper.js, and jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script src="{% static "js/scripts.js" %}"></script>
+        <script src="{% static "js/login-register.js" %}"></script>
+    </body>
+</html>
