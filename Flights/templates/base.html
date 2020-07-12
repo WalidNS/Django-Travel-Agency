@@ -7,7 +7,6 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-        <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}">
         <link rel="stylesheet" href="{% static "css/login-register.css" %}">
         <link href="{% static "css\styles.css" %}" rel="stylesheet">
     </head>
@@ -67,13 +66,13 @@
                       <div class="box">
                            <div class="content">
                               <div class="social">
-                                  <a class="circle github" href="">
+                                  <a class="circle github" href="/accounts/github/login/?process=login">
                                       <i class="fa fa-github fa-fw"></i>
                                   </a>
-                                  <a id="google_login" class="circle google" href="">
-                                      <i class="fa fa-google-plus fa-fw"></i>
+                                  <a id="google_login" class="circle google" href="/accounts/google/login/?process=login">
+                                     <i class="fa fa-google-plus fa-fw"></i>
                                   </a>
-                                  <a id="facebook_login" class="circle facebook" href="">
+                                  <a id="facebook_login" class="circle facebook" href="/accounts/facebook/login/?process=login">
                                       <i class="fa fa-facebook fa-fw"></i>
                                   </a>
                               </div>
@@ -225,12 +224,7 @@
                 }
             })
             }) 
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left'
-                }, function(start, end, label) {
-                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-            });
-            });
+            })
         </script>
     </body>
 </html>

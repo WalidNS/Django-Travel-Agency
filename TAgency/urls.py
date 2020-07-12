@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('Home/', include('Flights.urls', namespace='Home'),name='Home'),
     path('Auth/', include('Authentification.urls', namespace='Auth'),name='Auth'),
+    path('accounts/', include('allauth.urls')),
 ]
