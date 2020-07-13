@@ -4,4 +4,121 @@
 
 {% block content %}
 
+
+<section>
+  <div class="container">
+      <div class="row justify-content-center pb-4">
+    <div class="col-md-12 heading-section text-center">
+      <h2 class="mb-4">Flights Destination</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mb-5">
+        <div class="search-wrap-1 search-wrap-notop ftco-animate p-4">
+        <form method="post" action="{% url 'Home:Flightsfilter'%}?page=1" class="search-property-1" id="filter_form">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-lg align-items-end">
+                <div class="form-group">
+                    <label for="#">Current location</label>
+                  <div class="form-field">
+                      <div class="icon"><span class="ion-ios-search"></span></div>
+                <input type="text" class="form-control" placeholder="Search place" name="current_place" required>
+              </div>
+          </div>
+            </div>
+            <div class="col-lg align-items-end">
+                <div class="form-group">
+                    <label for="#">Destination</label>
+                    <div class="form-field">
+                      <div class="icon"><span class="ion-ios-calendar"></span></div>
+                <input type="text" class="form-control checkin_date" placeholder="Destination" name="destination">
+              </div>
+          </div>
+            </div>
+            <div class="col-lg align-items-end">
+                <div class="form-group">
+                    <label for="#">Date</label>
+                    <div class="form-field">
+                      <div class="icon"><span class="ion-ios-calendar"></span></div>
+                <input type="text" class="form-control checkout_date" placeholder="Date range" name="daterange" value="" required>
+              </div>
+          </div>
+            </div>
+            <div class="col-lg align-items-end">
+                <div class="form-group">
+                    <label for="#">Price Limit</label>
+                    <div class="form-field">
+                      <div class="select-wrap">
+              <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+              <select name="price_range" id="prange" class="form-control">
+                <option value="100">$100</option>
+                <option value="200">$200</option>
+                <option value="300">$300</option>
+                <option value="400">$400</option>
+                <option value="500">$500</option>
+                <option value="600">$600</option>
+              </select>
+            </div>
+              </div>
+          </div>
+            </div>
+            <div class="col-lg align-self-end">
+                <div class="form-group">
+                    <div class="form-field">
+                <input type="submit" value="Search" class="form-control btn btn-primary">
+              </div>
+          </div>
+            </div>
+        </div>
+    </form>
+</div>
+    </div>
+  </div>
+  <!-- Flights-->
+    <div class="row justify-content-center" id="flights_data">
+      {% for flight in Flights_pg %}
+        <div class="col-md-4">
+            <div class="project-wrap">
+                <a href="#" class="img" style="background-size: cover;
+                background-repeat: no-repeat;background-position: 50% 50%;background-image: url(./media/{{ flight.image }});"></a>
+                <div class="text p-4">
+                    <span class="price">{{ flight.Price }}$</span>
+                    <span class="days">{{ flight.FlightDate }}</span>
+                    <h3><a href="#">{{ flight.Arrival }}</a></h3>
+                    <p class="location"><span class="ion-ios-map"></span> From {{ flight.Departure }}</p>
+                    <div class="d-flex flex-row-reverse" id="heart_div">
+                    {% if user.is_authenticated %}
+                      {% if user in flight.likes.all %}
+                      <a href="{% url 'Home:dislike'%}?flightid={{flight.id}}" id="dislike_link"><i class="fas fa-heart"></i></a>
+                      {% else %}
+                      <a href="{% url 'Home:like'%}?flightid={{flight.id}}" id="like_link"><i class="far fa-heart"></i></a>
+                      {% endif %}
+                    {% endif %}
+                  </div> 
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+  <!-- Flights Pagination -->
+  <div class="row mt-5" id="pagination_div">
+    <div class="col text-center">
+      <div class="block-27">
+        <ul>
+          {% if Flights_pg.has_previous %}
+          <li><a href="?page=1">&lt;</a></li>
+          {% endif %}
+          <li class="active"><span>{{ Flights_pg.number }}</span></li>
+          {% if Flights_pg.has_next %}
+          <li><a href="?page={{ Flights_pg.next_page_number }}">&gt;</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
 {% endblock %}

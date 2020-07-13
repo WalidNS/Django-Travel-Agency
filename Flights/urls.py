@@ -10,7 +10,10 @@ app_name = 'Flights'
 urlpatterns = [
     # Home views
     path('', views.Home_view, name='Home'),
-    
+    url('Flights', views.Flights_View, name='Flights'),
+    url('flights_filter/', views.Flights_filter, name='Flightsfilter'),
+    url('dislike/', views.dislike, name='dislike'),
+    url('like/', views.like, name='like'),
 ]
 
 if settings.DEBUG:

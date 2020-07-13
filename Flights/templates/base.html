@@ -22,7 +22,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ml-auto">
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Home:Home'%}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Flights</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Home:Flights'%}">Flights</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'Auth:logout' %}">Logout</a></li>
                         {% else %}
@@ -223,7 +223,78 @@
                 alert("errors");
                 }
             })
-            }) 
+            })
+
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'left'
+                }, function(start, end, label) {
+                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            });
+
+            //Flights filter ajax
+            $("#filter_form").submit(function (e) {
+                // preventing from page reload and default actions
+                e.preventDefault();
+                // serialize the data for sending the form data.
+                var serializedData = $(this).serialize();
+                //console.log(serializedData)
+                // make POST ajax call
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'Home:Flightsfilter' %}",
+                    data: serializedData,
+                    success: function (response) {
+                        if(response !== undefined){
+                            try{
+                            var resp = response["Flights_pg"];
+                            if (resp !== undefined){
+                                json_res= JSON.parse(resp);
+                                console.log(json_res);
+                                if(json_res.length != 0 ){
+                                    $("#flights_data").empty();
+                                    $("#pagination_div").empty();
+                                    json_res.forEach(flight =>{
+                                        //console.log(flight.fields.likes)
+                                        $("#flights_data").append(
+                                        `<div class="col-md-4">
+                                            <div class="project-wrap">
+                                                <a href="#" class="img" style="background-size: cover;background-repeat: no-repeat;background-position: 50% 50%;background-image: url(./media/${flight.fields.image});"></a>
+                                                <div class="text p-4">
+                                                    <span class="price">${flight.fields.Price}$</span>
+                                                    <span class="days">${flight.fields.FlightDate}</span>
+                                                    <h3><a href="#">${flight.fields.Arrival}</a></h3>
+                                                    <p class="location"><span class="ion-ios-map"></span> From ${flight.fields.Departure}</p>
+                                                    <div class="d-flex flex-row-reverse" id="heart_div">
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                        </div>`
+                                        )
+                                    });           
+                                }else{
+                                    $("#flights_data").empty();
+                                    $("#pagination_div").empty();
+                                    $("#flights_data").prepend(`<div class="d-flex justify-content-center">Unfortunately, there are No flights with the specified filters</div>`);
+                                    }
+                            }
+                            else
+                                location.reload();    
+                        }
+                        catch(error){
+                            //console.error("Not a JSON response")
+                            console.log('esalem')
+                        }
+                    }
+                    },
+                    error: function (response) {
+                    // alert the error if any error occured
+                    alert(response.status);
+                    }
+            })
+            })
+
+            // like and dislike ajax
+
             })
         </script>
     </body>
