@@ -8,13 +8,14 @@ from django.utils.dateparse import parse_date
 # import the logging library
 import logging
 from django.core.serializers import serialize
+from django.db.models import Count
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 def Home_view(request):
-    Flights = Flight.objects.all()
-    return render(request,'Flight/list.html')
+    Top_liked_Flights = Flight.objects.all().annotate(num_likes = Count('likes')).order_by('-num_likes')[:4]
+    return render(request,'Flight/list.html',{"Flights": Top_liked_Flights})
 
 def Flights_View(request):
     Flights = Flight.objects.all()
@@ -46,16 +47,18 @@ def Flights_filter(request):
 
 def like(request):
     Flight_id=request.GET.get('flightid')
-    current_Flight = Flight.objects.get(pk=Flight_id)
-    current_Flight.likes.add(request.user)
-    current_Flight.save()
-    return JsonResponse({'msg':'Liked successfully'})
+    current_Flight = Flight.objects.filter(id=Flight_id)
+    current_Flight[0].likes.add(request.user)
+    cu_f=serialize('json',current_Flight)
+    current_Flight[0].save()
+    return JsonResponse({"Flight":cu_f})
 
 def dislike(request):
     Flight_id=request.GET.get('flightid')
-    current_Flight = Flight.objects.get(pk=Flight_id)
-    current_Flight.likes.remove(request.user)
-    current_Flight.save()
-    return JsonResponse({'msg':'Disliked successfully'})
+    current_Flight = Flight.objects.filter(id=Flight_id)
+    current_Flight[0].likes.remove(request.user)
+    cu_f=serialize('json',current_Flight)
+    current_Flight[0].save()
+    return JsonResponse({"Flight":cu_f})
     
 

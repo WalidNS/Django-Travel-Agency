@@ -87,15 +87,28 @@
                     <span class="days">{{ flight.FlightDate }}</span>
                     <h3><a href="#">{{ flight.Arrival }}</a></h3>
                     <p class="location"><span class="ion-ios-map"></span> From {{ flight.Departure }}</p>
-                    <div class="d-flex flex-row-reverse" id="heart_div">
-                    {% if user.is_authenticated %}
-                      {% if user in flight.likes.all %}
-                      <a href="{% url 'Home:dislike'%}?flightid={{flight.id}}" id="dislike_link"><i class="fas fa-heart"></i></a>
-                      {% else %}
-                      <a href="{% url 'Home:like'%}?flightid={{flight.id}}" id="like_link"><i class="far fa-heart"></i></a>
-                      {% endif %}
-                    {% endif %}
-                  </div> 
+                    
+                    <div class="d-flex justify-content-between" id="heart_div">
+                        {% if user.is_authenticated %}
+                        <div>
+                        <a href="#">Books Now</a>
+                        </div>
+                        <div class="flight{{flight.pk}}">
+                        <span>{{flight.likes.all.count}}</span>
+                        {% if user in flight.likes.all %}
+                        <a href="" id="flightid={{flight.id}}" onclick="dislike(document.getElementById(this.id).parentNode);return false;"><i class="fas fa-heart"></i></a>
+                        {% else %}
+                        <a href="" id="flightid={{flight.id}}" onclick="like(document.getElementById(this.id).parentNode);return false;"><i class="far fa-heart"></i></a>
+                        {% endif %}
+                        </div>
+                        {% else %}
+                        <a href="#" data-toggle="modal" data-target="#loginModal">Books Now</a>
+                        <div>
+                        <span>{{flight.likes.all.count}}</span>&nbsp;<a href="#" data-toggle="modal" data-target="#loginModal"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                        </div>
+                        {% endif %}
+                        
+                    </div> 
                 </div>
             </div>
         </div>

@@ -246,7 +246,7 @@
                     success: function (response) {
                         if(response !== undefined){
                             try{
-                            var resp = response["Flights_pg"];
+                            const resp = response["Flights_pg"];
                             if (resp !== undefined){
                                 json_res= JSON.parse(resp);
                                 console.log(json_res);
@@ -265,6 +265,18 @@
                                                     <h3><a href="#">${flight.fields.Arrival}</a></h3>
                                                     <p class="location"><span class="ion-ios-map"></span> From ${flight.fields.Departure}</p>
                                                     <div class="d-flex flex-row-reverse" id="heart_div">
+                                                        <div>
+                                                            <span>${flight.fields.likes.length}</span>
+                                                            {% if user.is_authenticated %}
+                                                            {% if user in flight.likes.all %}
+                                                            <a href="{% url 'Home:dislike'%}?flightid=${flight.pk}" id="dislike_link"><i class="fas fa-heart"></i></a>
+                                                            {% else %}
+                                                            <a href="{% url 'Home:like'%}?flightid=${flight.pk}" id="like_link"><i class="far fa-heart"></i></a>
+                                                            {% endif %}
+                                                            {% else %}
+                                                            &nbsp;<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                                                            {% endif %}
+                                                        </div>
                                                     </div> 
                                                 </div>
                                             </div>
@@ -292,10 +304,57 @@
                     }
             })
             })
-
-            // like and dislike ajax
-
-            })
+        })
+        function like(parent){
+                let id = parent.getElementsByTagName('a')[0].id;
+                $.ajax({
+                    type: 'GET',
+                    url: `{% url 'Home:like' %}?${id}`,
+                    success: function (response) {
+                        parent.querySelectorAll('*').forEach(n => n.remove());
+                        let a_node = document.createElement("a");
+                        a_node.id=id;
+                        a_node.href="";
+                        a_node.setAttribute("onclick","dislike(document.getElementById(this.id).parentNode);return false;")
+                        let i_node = document.createElement("i");
+                        i_node.className="fas fa-heart";
+                        a_node.appendChild(i_node);
+                        parent.append(a_node);
+                        let new_span=document.createElement("span");
+                        json_res= JSON.parse(response["Flight"]);
+                        new_span.textContent=json_res[0].fields.likes.length
+                        parent.prepend(new_span);
+                    },
+                    error: function(response){
+                        console.log("error");
+                    }
+                })
+            }
+            function dislike(parent){
+                let id = parent.getElementsByTagName('a')[0].id;
+                $.ajax({
+                    type: 'GET',
+                    url: `{% url 'Home:dislike' %}?${id}`,
+                    success: function (response) {
+                        parent.querySelectorAll('*').forEach(n => n.remove());
+                        let a_node = document.createElement("a");
+                        a_node.id=id;
+                        a_node.href="";
+                        a_node.setAttribute("onclick","like(document.getElementById(this.id).parentNode);return false;")
+                        let i_node = document.createElement("i");
+                        i_node.className="far fa-heart";
+                        a_node.appendChild(i_node);
+                        parent.append(a_node);
+                        let new_span=document.createElement("span");
+                        json_res= JSON.parse(response["Flight"]);
+                        new_span.textContent=json_res[0].fields.likes.length
+                        parent.prepend(new_span);
+                    },
+                    error: function(response){
+                        console.log("error");
+                    }
+                })
+            }
         </script>
     </body>
 </html>
